@@ -1,171 +1,14 @@
-REM Graduate admissions demonstration expert system v 1.1
-
-REM Decide how to proceed
-
-RULE [UG status not specified]
-If [the applicant's UG status] = "not specified"
-Then [the language requirement] = "not met"
-
-RULE [Language requirement not met]
-If [the applicant's UG status] ! "receiving a bachelor's degree from a US institution" and
-[the applicant's TOEFL score] < 200
-Then [the language requirement] = "not met"
-
-RULE [Language requirement met] 
-If [the applicant's UG status] = "receiving a bachelor's degree from a US institution" or
-[the applicant's TOEFL score] > 199
-Then [the language requirement] = "met"
-
-RULE [Conditional consideration]
-If [the language requirement] = "met" and
-[the applicant's final undergraduate transcript] = "not available"
-Then [the evaluation] = "for a conditional decision"
-
-RULE [Full consideration]
-If [the language requirement] = "met" and
-[the applicant's final undergraduate transcript] = "available"
-Then [the evaluation] = "for a full decision"
-
-REM Conditional evaluation
-
-RULE [Wait for transcript]
-If [the evaluation] = "for a conditional decision" and
-[the applicant's GPR on last 60 undergraduate hours] < 3.3
-Then [the recommendation] = "wait for transcript" and
-[the action] = "based on established policy"
-
-RULE [Honor student]
-If [the evaluation] = "for a conditional decision" and
-[the applicant's GPR on last 60 undergraduate hours] > 3.29 and
-[the applicant] = "an honor student" 
-Then [the recommendation] = "admit conditionally" and
-[the action] = "based on special decision"
-
-RULE [Conditional eval, high GRE]
-If [the evaluation] = "for a conditional decision" and
-[the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] > 1099
-Then [the recommendation] = "admit conditionally" and
-[the action] = "based on special decision"
-
-RULE [Conditional eval, low GRE]
-If [the evaluation] = "for a conditional decision" and
-[the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] < 1100
-Then [the recommendation] = "wait for transcript" and
-[the action] = "based on established policy"
-
-REM Full evaluation
-
-REM Deny
-
-RULE [Deny because language requirement not met] 
-If [the language requirement] = "not met"
-Then [the recommendation] = "deny normal admission" and
-[the action] = "based on established policy"
-
-RULE [Deny because of graduate GPR]
-If [the applicant's graduate status] = "prior graduate work completed" and
-[the applicant's GPR on prior graduate work] < 3.0
-Then [the recommendation] = "deny normal admission" and
-[the action] = "based on established policy"
-
-RULE [Consider undergraduate GPR (no grad credits)]
-If [the applicant's graduate status] = "no prior graduate work completed"
-Then [the undergraduate GPR should be considered] = true
-
-RULE [Consider undergraduate GPR (grad credits)]
-If [the applicant's graduate status] = "prior graduate work completed" and
-[the applicant's GPR on prior graduate work] > 2.99
-Then [the undergraduate GPR should be considered] = true
-
-RULE [Deny because of undergraduate GPR]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] < 2.5
-Then [the recommendation] = "deny normal admission" and
-[the action] = "based on established policy"
-
-RULE [Deny because of undergraduate GPR and GRE]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.49 and
-[the applicant's GRE score] < 900
-Then [the recommendation] = "deny normal admission" and
-[the action] = "based on established policy"
-
-RULE [Deny because of GRE]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.49 and
-[the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] < 900
-Then [the recommendation] = "deny normal admission" and
-[the action] = "based on established policy"
-
-REM Provisional acceptance
-
-RULE [Provisional acceptance: low GRE, verbal GRE]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.49 and
-[the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] > 899 and
-[the applicant's GRE score] < 1100 and
-[the applicant's GRE verbal score] < 400
-Then [the recommendation] = "admit provisionally - recommend English remediation" and
-[the action] = "based on established policy"
-
-RULE [Provisional acceptance: low GPR, verbal GRE]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.49 and
-[the applicant's GPR on last 60 undergraduate hours] < 3.0 and
-[the applicant's GRE score] > 899 and
-[the applicant's GRE verbal score] < 400
-Then [the recommendation] = "admit provisionally - recommend English remediation" and
-[the action] = "based on established policy"
-
-RULE [Provisional acceptance: low GRE]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.99 and
-[the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] > 899 and
-[the applicant's GRE score] < 1100 and
-[the applicant's GRE verbal score] > 399
-Then [the recommendation] = "admit provisionally" and
-[the action] = "based on established policy"
-
-RULE [Provisional acceptance: low GPR]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.49 and
-[the applicant's GPR on last 60 undergraduate hours] < 3.0 and
-[the applicant's GRE score] > 899
-Then [the recommendation] = "admit provisionally" and
-[the action] = "based on established policy"
-
-REM Accept
-
-RULE [Acceptance: honors]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.99 and
-[the applicant] : "an honor graduate" "a class valedictorian" "a class salutatorian"
-Then [the recommendation] = "admit with full status" and
-[the action] = "based on special decision"
-
-RULE [Acceptance at departmental discretion]
-If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.99 and
-[the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] > 1099 and
-[the applicant's GRE verbal score] < 400
-Then [the recommendation] = "admission decision is at department's discretion" and
-[the action] = "based on established policy"
-
 RULE [Acceptance]
 If [the undergraduate GPR should be considered] = true and
-[the applicant's GPR on last 60 undergraduate hours] > 2.99 and
+[the applicant's GPR on last 60 undergraduate hours] >= 3.00 and
 [the applicant] = "not the recipient of special honors" and
-[the applicant's GRE score] > 1099 and
-[the applicant's GRE verbal score] > 399
+[the applicant's GRE score] >= 1100 and
+[the applicant's GRE verbal score] >= 400
 Then [the recommendation] = "admit with full status" and
 [the action] = "based on established policy"
-
+.
+.
+.
 REM Prompts
 
 PROMPT [the applicant's UG status] MultChoice CF
@@ -177,47 +20,9 @@ PROMPT [the applicant's TOEFL score] Numeric
 "What is the applicant's TOEFL (Test of English as a Foreign Language 0->300) score?"
 "0"
 "300"
-
-PROMPT [the applicant's GPR on prior graduate work] Numeric
-"What is the applicant's GPR (Grade point ratio 0->4.0) for prior graduate work?"
-"0"
-"4.0"
-
-PROMPT [the applicant's final undergraduate transcript] MultChoice
-"The applicant's final undergraduate transcript is:"
-"available"
-"not available"
-
-PROMPT [the applicant's GPR on last 60 undergraduate hours] Numeric
-"What is the applicant's GPR (Grade point ratio 0->4.0) for the last 60 UG hours?"
-"0"
-"4.0"
-
-PROMPT [the applicant's graduate status] MultChoice
-"This applicant's graduate status is:"
-"prior graduate work completed"
-"no prior graduate work completed"
-
-PROMPT [the applicant's GPR on prior graduate work] Numeric
-"What is the applicant's GPR (Grade point ratio 0->4.0) on prior graduate work?"
-"0"
-"4.0"
-
-PROMPT [the applicant] AllChoice
-"This applicant is (check all that apply):"
-"an honor student"
-"an honor graduate"
-"a class valedictorian"
-"a class salutatorian"
-
-PROMPT [the applicant's GRE score] Numeric
-"What is the applicant's total GRE (Graduate Record Exam 0->1600) score?"
-"0"
-"1600"
-
-PROMPT [the applicant's GRE verbal score] Numeric
-"What is the applicant's GRE verbal (0->800) score?"
-
+.
+.
+.
 GOAL [the recommendation]
 GOAL [the action]
 
